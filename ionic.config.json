@@ -1,0 +1,7 @@
+{
+  "name": "Szaszki",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
