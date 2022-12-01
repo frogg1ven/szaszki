@@ -13,4 +13,14 @@ export default () => ({
   whiteSquares: "#FFFFFF",
   lastPart: 255,
   splitIP: [],
+  ipColor: "dark",
+  port: 2137,
+  fen: "",
+  castle: {
+    ooW: true,
+    oooW: true,
+    ooB: true,
+    oooB: true,
+  },
+  overflow: true,
 });

@@ -31,8 +31,10 @@ export default {
    */
   getSquarePosition(row, col, option = {}) {
     return {
-      x: col * option.square.width + option.padding,
-      y: (row + 1) * option.square.height + option.padding,
+      // x: col * option.square.width + option.padding,
+      // y: (row + 1) * option.square.height + option.padding,
+      x: col * option.square.width,
+      y: (row + 1) * option.square.height + 10,
     };
   },
 

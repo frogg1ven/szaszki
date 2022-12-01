@@ -1,17 +1,17 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Szachy</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content>
-      <ion-grid>
+    <ion-content :style="this.overflowCondition ? '--overflow:auto' : '--overflow:hidden'">
+      <ion-grid class="no-padding">
         <ion-row>
-          <ion-col class="center">
-            <game />
-          </ion-col>
+          <game />
         </ion-row>
+        <div class="bg-img2" style="margin: 5px;">
+          <ion-row>
+            <ion-col>
+              <fen-input />
+            </ion-col>
+          </ion-row>
+        </div>
       </ion-grid>
     </ion-content>
   </ion-page>
@@ -21,30 +21,31 @@
 import { defineComponent } from "vue";
 import {
   IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonGrid,
-  IonCol,
   IonRow,
+  IonCol
 } from "@ionic/vue";
 import Game from "@/components/Game/GameComponent.vue";
-// import store from "@/store/index.js";
+import FenInput from "@/components/Game/FenComponent.vue"
+import store from "@/store/index.js";
 
 export default defineComponent({
   name: "GamePage",
   components: {
-    IonHeader,
-    IonToolbar,
-    IonTitle,
     IonContent,
     IonPage,
     Game,
     IonGrid,
-    IonCol,
     IonRow,
+    FenInput,
+    IonCol
   },
+  computed: {
+    overflowCondition() {
+      return store.state.overflow ? true : false;
+    }
+  }
 
 });
 </script>

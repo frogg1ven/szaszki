@@ -1,11 +1,5 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Ustawienia</ion-title>
-      </ion-toolbar>
-    </ion-header>
-
     <ion-content class="ion-padding">
       <div class="center1">
         <div class="bg-img2">
@@ -20,10 +14,10 @@
               <ion-row>
                 <ion-range
                   min="0"
-                  max="255"
+                  max="15"
                   color="secondary"
-                  step="15"
-                  debounce="500"
+                  step="1"
+                  debounce="1"
                   @ionChange="changeColor(selectedColorWhite, 1)"
                   v-model="selectedColorWhite"
                 >
@@ -45,10 +39,10 @@
               <ion-row>
                 <ion-range
                   min="0"
-                  max="255"
+                  max="15"
                   color="secondary"
-                  step="15"
-                  debounce="500"
+                  step="1"
+                  debounce="1"
                   @ionChange="changeColor(selectedColorBlack, 0)"
                   v-model="selectedColorBlack"
                 >
@@ -66,10 +60,7 @@
 import { defineComponent } from "vue";
 import {
   IonContent,
-  IonHeader,
   IonPage,
-  IonTitle,
-  IonToolbar,
   IonLabel,
   IonRow,
   IonCol,
@@ -77,15 +68,12 @@ import {
   IonItem,
 } from "@ionic/vue";
 import axios from "axios";
-import color from "@/components/Game/GameComponent.vue";
+import store from "@/store/index.js";
 
 export default defineComponent({
   components: {
     IonContent,
-    IonHeader,
     IonPage,
-    IonTitle,
-    IonToolbar,
     IonLabel,
     IonCol,
     IonRow,
@@ -95,7 +83,7 @@ export default defineComponent({
   data() {
     return {
       selectedEffect: null,
-      selectedColorWhite: "255",
+      selectedColorWhite: "15",
       selectedColorBlack: "0",
       color: [
         "#000000",
@@ -119,43 +107,20 @@ export default defineComponent({
   },
   methods: {
     changeColor(selectedColor, c) {
-      let param = selectedColor;
-      this.selectedEffect = null;
-      window.RTCPeerConnection =
-        window.RTCPeerConnection ||
-        window.mozRTCPeerConnection ||
-        window.webkitRTCPeerConnection; //compatibility for Firefox and chrome
-      let pc = new RTCPeerConnection({ iceServers: [] }),
-        noop = function () {};
-      pc.createDataChannel(""); //create a bogus data channel
-      pc.createOffer(pc.setLocalDescription.bind(pc), noop); // create offer and set local description
-      pc.onicecandidate = function (ice) {
-        if (ice && ice.candidate && ice.candidate.candidate) {
-          let myIP = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/.exec(ice.candidate.candidate)[1];
-          console.log("my IP: ", myIP);
-          pc.onicecandidate = noop;
-          let mySplitIP = myIP.split(".");
-          let url =
-            "http://" +
-            mySplitIP[0] +
-            "." +
-            mySplitIP[1] +
-            "." +
-            mySplitIP[2] +
-            ".254:2391/led";
-          console.log(url);
-          axios
-            .get(url, { params: { currentColor: param } })
-            .then((res) => {
-              console.log(res);
-            })
-            .catch((error) => {
-              console.log(error.message);
-            });
-        }
-      };
-      c ? color.value.light = this.color[param / 15 - 1] : color.value.dark = this.color[param / 15 - 1];
-      return c ? this.$store.commit("CHANGE_WHITE_SQUARES_COLOR", this.color[param / 15 - 1]) : this.$store.commit("CHANGE_BLACK_SQUARES_COLOR", this.color[param / 15 - 1]);
+      let url = "http://" + store.state.splitIP[0] + "." + store.state.splitIP[1] + "." + 
+                store.state.splitIP[2] + "." + store.state.lastPart + ":" + store.state.port + "/squareColor"
+      console.log(url);
+      axios
+        .get(url, {
+          params: { square: c, color: selectedColor}
+        })
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((error) => {
+          console.log(error.message);
+        });
+      return c ? this.$store.commit("CHANGE_WHITE_SQUARES_COLOR", this.color[selectedColor]) : this.$store.commit("CHANGE_BLACK_SQUARES_COLOR", this.color[selectedColor]);
     },
   },
 });
