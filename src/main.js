@@ -42,3 +42,4 @@ app.component("font-awesome-icon", FontAwesomeIcon);
 router.isReady().then(() => {
   app.mount('#app');
 });
+// komentarz
