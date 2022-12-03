@@ -431,6 +431,7 @@
       :y="props.y"
       :width="props.width"
       :height="props.height"
+      class="top"
       viewBox="14 5 17 35"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

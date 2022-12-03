@@ -21,7 +21,7 @@
           </form>
           <hr />
           <div class="ion-margin">
-            <ion-input class="input-border" :v-model="ipInput" name="ip" type="ip" :color=ipColor
+            <ion-input class="input-border" v-model="ip" name="ip" type="ip" :color=ipColor
               placeholder="Adres IP nie znaleziony" ngModel required></ion-input>
           </div>
           <div>
@@ -68,6 +68,7 @@ export default defineComponent({
         ssid: "",
         password: "",
       },
+      ip: "",
     };
   },
   computed: {
@@ -77,7 +78,7 @@ export default defineComponent({
     ipInput() {
       return store.state.lastPart != 255 ? store.state.splitIP[0] + "." +
         store.state.splitIP[1] + "." + store.state.splitIP[2] + "." +
-        store.state.lastPart : "";
+        store.state.lastPart : false;
     }
   },
   methods: {
@@ -172,6 +173,7 @@ export default defineComponent({
     },
     async manualAdd() {
       let splitIP = this.ip.split(".");
+      console.log("manual: ", this.ip);
       store.commit("CHANGE_IP_COLOR", "dark");
       store.commit("CHANGE_SPLIT_IP", splitIP);
       store.commit("CHANGE_LAST_PART", splitIP[3]);

@@ -17,7 +17,7 @@
                   max="15"
                   color="secondary"
                   step="1"
-                  debounce="1"
+                  debounce="500"
                   @ionChange="changeColor(selectedColorWhite, 1)"
                   v-model="selectedColorWhite"
                 >
@@ -42,7 +42,7 @@
                   max="15"
                   color="secondary"
                   step="1"
-                  debounce="1"
+                  debounce="500"
                   @ionChange="changeColor(selectedColorBlack, 0)"
                   v-model="selectedColorBlack"
                 >
