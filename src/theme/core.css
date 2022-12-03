@@ -44,33 +44,6 @@ input:-webkit-autofill:-webkit-autofill {
   border-radius: 10px;
 }
 
-.rainbow {
-  height: 10px;
-  width: 100%;
-  border-radius: 30px;
-  margin: 10px;
-  margin-top: 20px;
-  background: linear-gradient(
-    90deg,
-    #000000 0%,
-    #ff0000 6.66%,
-    #ebaf3f 13.32%,
-    #fffb18 19.99%,
-    #75ce00 26.64%,
-    #56d500 33.31%,
-    #00ff00 39.96%,
-    #00d52a 46.63%,
-    #00ab55 53.29%,
-    #0056aa 59.95%,
-    #0000ff 66.61%,
-    #2a00d5 73.27%,
-    #8000ff 79.92%,
-    #ac00af 86.59%,
-    #d10069 93.25%,
-    #ffffff 100%
-  );
-}
-
 .center {
   position: absolute;
   top: 50%;
@@ -169,14 +142,10 @@ ion-popover ion-list {
   z-index: 99 !important;
 }
 
-.visually-hidden {
-	position: absolute;
-	overflow: hidden;
-	clip: rect(0 0 0 0);
-	width: 1px;
-	height: 1px;
-	margin: -1px;
-	padding: 0;
-	border: 0;
-	white-space: nowrap;
+.vacp-copy-button {
+  display: none !important;
+}
+
+.vacp-color-picker {
+  background-color: #f8e8fc !important;
 }
