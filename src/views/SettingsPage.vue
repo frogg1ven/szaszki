@@ -51,6 +51,19 @@
             </ion-col>
           </ion-item>
         </div>
+        <div class="bg-img2">
+          <ColorPicker 
+            :visible-formats="['rgb']"
+            alpha-channel="hide"
+          >
+            <template #hue-range-input-label>
+            <span class="visually-hidden">Hue</span>
+            </template>
+            <template #alpha-range-input-label>
+              <span class="visually-hidden">Alpha</span>
+            </template>
+          </ColorPicker>
+        </div>
       </div>
     </ion-content>
   </ion-page>
@@ -69,6 +82,7 @@ import {
 } from "@ionic/vue";
 import axios from "axios";
 import store from "@/store/index.js";
+import { ColorPicker } from 'vue-accessible-color-picker'
 
 export default defineComponent({
   components: {
@@ -79,6 +93,7 @@ export default defineComponent({
     IonRow,
     IonRange,
     IonItem,
+    ColorPicker,
   },
   data() {
     return {
