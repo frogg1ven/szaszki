@@ -5,7 +5,7 @@ import router from './router';
 import { IonicVue } from '@ionic/vue';
 
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faChessBoard, faArrowRotateRight, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { faChessBoard, faArrowRotateRight, faPaperPlane, faRedo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 import store from "./store";
@@ -30,7 +30,7 @@ import '@ionic/vue/css/display.css';
 import './theme/variables.css';
 import './theme/core.css';
 
-library.add(faChessBoard, faArrowRotateRight, faPaperPlane );
+library.add(faChessBoard, faArrowRotateRight, faPaperPlane, faRedo);
 
 const app = createApp(App)
   .use(IonicVue)

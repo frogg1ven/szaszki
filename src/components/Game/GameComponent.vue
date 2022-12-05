@@ -1,62 +1,28 @@
 <template>
-  <svg
-    ref="svg"
-    :viewBox="`0 0 ${viewbox.x} ${viewbox.y}`"
-    @mousemove="onMouseMove"
-  >
-  <!-- Base Color -->
-  <rect
-      class="bottom"
-      x="0"
-      y="0"
-      :width="viewbox.x"
-      :height="viewbox.y"
-      :fill="boardSettings.baseColor"
-    ></rect>
+  <svg ref="svg" :viewBox="`0 0 ${viewbox.x} ${viewbox.y}`" @mousemove="onMouseMove">
+    <!-- Base Color -->
+    <rect class="bottom" x="0" y="0" :width="viewbox.x" :height="viewbox.y" :fill="boardSettings.baseColor"></rect>
     <!-- ############### czarny edytor pozycji ################ -->
     <g class="position-editor-black-squares">
-      <g
-        v-for="(squareRow, squareRowIndex) in positionEditorBlack"
-        :key="squareRow"
-        class="square-row"
-      >
-        <g
-          v-for="(square, squareColIndex) in squareRow"
-          :key="square.code"
-          :ref="square.code"
-          :class="{ square: true, [`square-${square.code}`]: true }"
-          @click="
+      <g v-for="(squareRow, squareRowIndex) in positionEditorBlack" :key="squareRowIndex" class="square-row">
+        <g v-for="(square, squareColIndex) in squareRow" :key="square.code" :ref="square.code"
+          :class="{ square: true, [`square-${square.code}`]: true }" @click="
             positionEditorSquareClick(
               $event,
-              squareRowIndex,
               squareColIndex,
               0
             )
-          "
-        >
-          <rect
-            :class="`rect-${square.code}`"
-            :x="square.x"
-            :y="square.y"
-            :width="square.width"
-            :height="square.height"
+          ">
+          <rect :class="`rect-${square.code}`" :x="square.x" :y="square.y" :width="square.width" :height="square.height"
             :fill="
               square.isPossibleMove
                 ? color['possibleMove']
                 : color[square.color]
-            "
-          ></rect>
+            "></rect>
           <g v-if="square.content.piece">
-            <Piece
-              v-show="square.visible"
-              :key="square.code"
-              :name="square.content.piece"
-              :x="square.content.x"
-              :y="square.content.y + 10"
-              :width="square.content.width"
-              :height="square.content.height"
-              :color="square.content.color"
-            />
+            <Piece v-show="square.visible" :key="square.code" :name="square.content.piece" :x="square.content.x"
+              :y="square.content.y + 10" :width="square.content.width" :height="square.content.height"
+              :color="square.content.color" />
           </g>
         </g>
       </g>
@@ -64,128 +30,66 @@
     <!-- ############### END czarny edytor pozycji ################ -->
     <!-- Square group -->
     <g class="squares">
-      <g
-        v-for="(squareRow, squareRowIndex) in squares"
-        :key="squareRowIndex"
-        class="square-row"
-      >
-        <g
-          v-for="(square, squareColIndex) in squareRow"
-          :key="square.code"
-          :ref="square.code"
+      <g v-for="(squareRow, squareRowIndex) in squares" :key="squareRowIndex" class="square-row">
+        <g v-for="(square, squareColIndex) in squareRow" :key="square.code" :ref="square.code"
           :class="{ square: true, [`square-${square.code}`]: true }"
-          @touchstart="squareClick($event, squareRowIndex, squareColIndex)"
-        >
-          <rect
-            :class="`rect-${square.color}`"
-            :x="square.x"
-            :y="square.y"
-            :width="square.width"
-            :height="square.height"
-            :fill="
+          @touchstart="squareClick($event, squareRowIndex, squareColIndex)">
+          <rect :class="`rect-${square.color}`" :x="square.x" :y="square.y" :width="square.width"
+            :height="square.height" :fill="
               square.isPossibleMove
                 ? color['possibleMove']
                 : square.color == 'light' ? lightSquare : darkSquare
-            "
-          ></rect>
+            "></rect>
           <g v-if="square.content.piece" class="top">
-            <Piece
-              v-show="square.visible"
-              :key="square.code"
-              :name="square.content.piece"
-              :x="square.content.x"
-              :y="square.content.y + 10"
-              :width="square.content.width"
-              :height="square.content.height"
-              :color="square.content.color"
-            />
+            <Piece v-show="square.visible" :key="square.code" :name="square.content.piece" :x="square.content.x"
+              :y="square.content.y + 10" :width="square.content.width" :height="square.content.height"
+              :color="square.content.color" />
           </g>
         </g>
-        <var v-if="castling"/>
+        <!-- <var v-if="castling" /> -->
       </g>
     </g>
     <g class="notations">
-      <text
-        v-for="i in 8"
-        :key="i"
-        class="notation"
-        :fill="i % 2 == 1 ? darkSquare : lightSquare"
-        x="0"
-        :y="30 + 110 * i"
-      >
+      <text v-for="i in 8" :key="i" class="notation" :fill="i % 2 == 1 ? darkSquare : lightSquare" x="0"
+        :y="30 + 110 * i">
         {{ 9 - i }}
       </text>
-      <text
-        v-for="(i, n) in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']"
-        :key="i"
-        class="notation"
-        :fill="n % 2 == 1 ? darkSquare : lightSquare"
-        :x="90 + 110 * n"
-        :y="viewbox.y - 120"
-      >
+      <text v-for="(i, n) in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']" :key="i" class="notation"
+        :fill="n % 2 == 1 ? darkSquare : lightSquare" :x="90 + 110 * n" :y="viewbox.y - 120">
         {{ i }}
       </text>
     </g>
-    
+
     <!-- ############### biały edytor pozycji ################ -->
     <g class="position-editor-white-squares">
-      <g
-        v-for="(squareRow, squareRowIndex) in positionEditorWhite"
-        :key="squareRowIndex"
-        class="square-row"
-      >
-        <g
-          v-for="(square, squareColIndex) in squareRow"
-          :key="square.code"
-          :ref="square.code"
-          :class="{ square: true, [`square-${square.code}`]: true }"
-          @click="
+      <g v-for="(squareRow, squareRowIndex) in positionEditorWhite" :key="squareRowIndex" class="square-row">
+        <g v-for="(square, squareColIndex) in squareRow" :key="square.code" :ref="square.code"
+          :class="{ square: true, [`square-${square.code}`]: true }" @click="
             positionEditorSquareClick(
               $event,
-              squareRowIndex,
               squareColIndex,
               1
             )
-          "
-        >
-          <rect
-            :class="`rect-${square.code}`"
-            :x="square.x"
-            :y="square.y"
-            :width="square.width"
-            :height="square.height"
+          ">
+          <rect :class="`rect-${square.code}`" :x="square.x" :y="square.y" :width="square.width" :height="square.height"
             :fill="
               square.isPossibleMove
                 ? color['possibleMove']
                 : color[square.color]
-            "
-          ></rect>
+            "></rect>
           <g v-if="square.content.piece">
-            <Piece
-              v-show="square.visible"
-              :key="square.code"
-              :name="square.content.piece"
-              :x="square.content.x"
-              :y="square.content.y + 10"
-              :width="square.content.width"
-              :height="square.content.height"
-              :color="square.content.color"
-            />
+            <Piece v-show="square.visible" :key="square.code" :name="square.content.piece" :x="square.content.x"
+              :y="square.content.y + 10" :width="square.content.width" :height="square.content.height"
+              :color="square.content.color" />
           </g>
         </g>
       </g>
     </g>
     <!-- ############### END biały edytor pozycji ################ -->
     <g class="holding-piece">
-      <Piece
-        v-if="isHoldingChessPiece"
-        :name="isHoldingChessPiece.content.piece"
-        :x="touchLocation.x"
-        :y="touchLocation.y"
-        :width="isHoldingChessPiece.content.width"
-        :color="isHoldingChessPiece.content.color"
-        :height="isHoldingChessPiece.content.height"
-      />
+      <Piece v-if="isHoldingChessPiece" :name="isHoldingChessPiece.content.piece" :x="touchLocation.x"
+        :y="touchLocation.y" :width="isHoldingChessPiece.content.width" :color="isHoldingChessPiece.content.color"
+        :height="isHoldingChessPiece.content.height" />
     </g>
   </svg>
 </template>
@@ -199,7 +103,7 @@ import store from "@/store/index.js";
 
 // const store = useStore();
 
-const viewbox = { x: 880, y: 1120};
+const viewbox = { x: 880, y: 1120 };
 /*eslint no-unused-vars: "off"*/
 let playerColor = ref("white");
 let turn = computed({
@@ -216,33 +120,29 @@ let squares = reactive([]);
 let possibleMoves = reactive([]);
 let svg = ref(null);
 let order = [
-  [
-    "finger",
-    "kingB",
-    "queenB",
-    "rookB",
-    "bishopB",
-    "knightB",
-    "pawnB",
-    "trash",
-  ],
-  [
-    "finger",
-    "kingW",
-    "queenW",
-    "rookW",
-    "bishopW",
-    "knightW",
-    "pawnW",
-    "trash",
-  ],
+  "finger",
+  "kingB",
+  "queenB",
+  "rookB",
+  "bishopB",
+  "knightB",
+  "pawnB",
+  "trash",
+  "finger",
+  "kingW",
+  "queenW",
+  "rookW",
+  "bishopW",
+  "knightW",
+  "pawnW",
+  "trash",
 ];
 let positionEditorBlack = reactive([]);
 let positionEditorWhite = reactive([]);
 let positionEditorFlag = 0;
 
-let darkSquare = computed(() => {return store.state.blackSquares;})
-let lightSquare = computed(() => {return store.state.whiteSquares;})
+let darkSquare = computed(() => { return store.state.blackSquares; })
+let lightSquare = computed(() => { return store.state.whiteSquares; })
 
 /*eslint no-undef: "off"*/
 const props = defineProps({
@@ -267,6 +167,7 @@ const props = defineProps({
       possibleMove: "#93c47d", // możliwe ruchy
       possibleStroke: "#e06666", // możliwe bicie
       editor: "#bcbcbc",
+      clicked: "#c8a0ff",
     }),
   },
 });
@@ -313,11 +214,11 @@ function initSquares() {
   positionEditorWhite.push([]);
   for (let y = 0; y < 8; y++) {
     let squarePosition = {
-      x: y * props.boardSettings.square.width ,
+      x: y * props.boardSettings.square.width,
       y: 0 * props.boardSettings.square.height,
     };
     let code = "black-" + y;
-    let squareContent = order[0][y];
+    let squareContent = order[y];
     let pieceSize = {
       width: props.boardSettings.square.width,
       height: (props.boardSettings.square.height * 3) / 4,
@@ -343,7 +244,7 @@ function initSquares() {
       y: 9 * props.boardSettings.square.height + 20
     };
     code = "white-" + y;
-    squareContent = order[1][y];
+    squareContent = order[y + 8];
     pieceSize = {
       width: props.boardSettings.square.width,
       height: (props.boardSettings.square.height * 3) / 4,
@@ -381,7 +282,14 @@ function squareClick($event, rowIndex, colIndex) {
   let rect = svg.value.getBoundingClientRect();
   touchLocation.x = (($event.changedTouches[0].clientX - rect.x) * viewbox.x) / rect.width - 55;
   touchLocation.y = (($event.changedTouches[0].clientY - rect.y) * viewbox.y) / rect.height - 60;
-  holdPiece($event, squares[rowIndex][colIndex]);
+  if (squares[rowIndex][colIndex].content.piece && (positionEditorFlag == 0 || positionEditorFlag == 8)) {
+    console.log("holdPiece")
+    holdPiece($event, squares[rowIndex][colIndex]);
+  }
+  else {
+    console.log("releaseFromEditor at click")
+    releaseFromEditor($event);
+  }
 }
 
 let touchLocation = reactive({ x: 0, y: 0 });
@@ -390,12 +298,41 @@ addEventListener('touchmove', (e) => {
   let rect = svg.value.getBoundingClientRect();
   touchLocation.x = ((e.changedTouches[0].clientX - rect.x) * viewbox.x) / rect.width - 55;
   touchLocation.y = ((e.changedTouches[0].clientY - rect.y) * viewbox.y) / rect.height - 60;
+  console.log(touchLocation.x, touchLocation.y);
+  releaseFromEditor(e);
+
 });
 
+function releaseFromEditor(e) {
+  let row = Math.floor((e.changedTouches[0].clientY - 60) / 50);
+  let col = Math.floor(e.changedTouches[0].clientX / 50);
+  switch (positionEditorFlag) {
+    case 0:
+    case 8:
+      // przesuwanie bierek
+      break;
+    case 7:
+    case 15:
+      // usuwanie bierki
+      if (squares[row][col].content.piece) {
+        squares[row][col].content.piece = null;
+        squares[row][col].content.color = null;
+      }
+      break;
+    default:
+      // dodwanie wybranej bierki
+      if (squares[row][col].content.piece != order[positionEditorFlag]) {
+        squares[row][col].content.piece = order[positionEditorFlag];
+        positionEditorFlag < 8 ? squares[row][col].content.color = "black" : squares[row][col].content.color = "white";
+      }
+      break;
+  }
+}
+
 addEventListener('touchend', (e) => {
-  if (isHoldingChessPiece.value) {
+  if (isHoldingChessPiece.value && (positionEditorFlag == 0 || positionEditorFlag == 8)) {
     store.commit("CHANGE_OVERFLOW", true);
-    console.log("releasePiece");
+    console.log("odkładam pionek, który trzymam w ręce");
     let row = Math.floor((e.changedTouches[0].clientY - 60) / 50);
     let col = Math.floor(e.changedTouches[0].clientX / 50);
     if (row < 0 || row > 7 || col < 0 || col > 7) {
@@ -429,9 +366,9 @@ function holdPiece($event, square) {
 function releasePiece($event, toSquareRow, toSquareCol) {
   let fromSquare = squares[holding.row][holding.col];
   let toSquare = squares[toSquareRow][toSquareCol];
-  
+
   // odkładanie na inne pole
-  if (holding.row != toSquareRow || holding.col != toSquareCol){
+  if (holding.row != toSquareRow || holding.col != toSquareCol) {
     console.log("holding: ", isHoldingChessPiece.value.content.x, isHoldingChessPiece.value.content.y);
     console.log("from: ", fromSquare.content.x, fromSquare.content.y);
     console.log("to: ", toSquare.content.x, toSquare.content.y);
@@ -445,27 +382,27 @@ function releasePiece($event, toSquareRow, toSquareCol) {
     toSquare.visible = true;
     fromSquare.content.piece = null;
     fromSquare.content.color = null;
-  
+
     isHoldingChessPiece.value = false;
-  
+
     turnNumber.value++;
-  
+
     updateFen();
     console.log("FEN: ", store.state.fen);
   }
   // odkładanie na to samo pole
-  else if(holding.row == toSquareRow && holding.col == toSquareCol){
+  else if (holding.row == toSquareRow && holding.col == toSquareCol) {
     console.log("holding: ", isHoldingChessPiece.value.content.x, isHoldingChessPiece.value.content.y);
     console.log("from: ", fromSquare.content.x, fromSquare.content.y);
     console.log("to: ", toSquare.x, toSquare.y);
     console.log("te same pola");
-  
+
     toSquare.content.piece = fromSquare.content.piece;
     toSquare.content.color = fromSquare.content.color;
     toSquare.content.x = toSquare.x;
     toSquare.content.y = toSquare.y;
     toSquare.visible = true;
-  
+
     isHoldingChessPiece.value = false;
   }
 }
@@ -526,73 +463,32 @@ function releasePiece($event, toSquareRow, toSquareCol) {
 //   }
 // });
 
-// /**
-//  * Event fire on square click
-//  * @returns {void}
-//  */
-// function positionEditorSquareClick($event, rowIndex, colIndex, color) {
-//   /*eslint no-unused-vars: "off"*/
-//   color
-//     ? (editSquare = positionEditorWhite[rowIndex][colIndex])
-//     : (editSquare = positionEditorBlack[rowIndex][colIndex]);
-//   console.log(editSquare.content.piece);
-//   switch (editSquare.content.piece) {
-//     // positionEditorFlag = 0 - brak opcji
-//     // black
-//     case order[0][1]:
-//       positionEditorFlag = 1;
-//       break;
-//     case order[0][2]:
-//       positionEditorFlag = 2;
-//       break;
-//     case order[0][3]:
-//       positionEditorFlag = 3;
-//       break;
-//     case order[0][4]:
-//       positionEditorFlag = 4;
-//       break;
-//     case order[0][5]:
-//       positionEditorFlag = 5;
-//       break;
-//     case order[0][6]:
-//       positionEditorFlag = 6;
-//       break;
-//     // white
-//     case order[1][1]:
-//       positionEditorFlag = 7;
-//       break;
-//     case order[1][2]:
-//       positionEditorFlag = 8;
-//       break;
-//     case order[1][3]:
-//       positionEditorFlag = 9;
-//       break;
-//     case order[1][4]:
-//       positionEditorFlag = 10;
-//       break;
-//     case order[1][5]:
-//       positionEditorFlag = 11;
-//       break;
-//     case order[1][6]:
-//       positionEditorFlag = 12;
-//       break;
-//     // finger
-//     case order[0][0]:
-//       positionEditorFlag = 13;
-//       break;
-//     // trash
-//     case order[0][7]:
-//       positionEditorFlag = 14;
-//       break;
-//   }
-//   console.log("positionEditorFlag = ", positionEditorFlag);
+/**
+ * Event fire on square click
+ * @returns {void}
+ */
+function positionEditorSquareClick($event, colIndex, color) {
+  for(let i = 0; i < 8; i++){
+    positionEditorWhite[0][i].color = "editor";
+    positionEditorBlack[0][i].color = "editor";
+  }
+  color ? (positionEditorFlag = colIndex + 8, colIndex == 0 || colIndex == 7 ? 
+          (positionEditorWhite[0][colIndex].color = "clicked", positionEditorBlack[0][colIndex].color = "clicked") 
+          : positionEditorWhite[0][colIndex].color = "clicked"): 
+          (positionEditorFlag = colIndex, colIndex == 0 || colIndex == 7 ? 
+          (positionEditorWhite[0][colIndex].color = "clicked", positionEditorBlack[0][colIndex].color = "clicked") 
+          : positionEditorBlack[0][colIndex].color = "clicked");
+  console.log("positionEditorFlag = ", positionEditorFlag);
 
-//   holding.row = rowIndex;
-//   holding.col = colIndex;
-//   positionEditorFlag == 13
-//     ? (isHoldingChessPiece.value = null)
-//     : (isHoldingChessPiece.value = editSquare);
-// }
+  // holding.row = rowIndex;
+  // holding.col = colIndex;
+  // if (positionEditorFlag != 13){
+  //   isHoldingChessPiece.value = squares
+  // }
+  // positionEditorFlag == 13
+  //   ? (isHoldingChessPiece.value = null)
+  //   : (isHoldingChessPiece.value = editSquare);
+}
 
 // /*eslint no-unused-vars: "off"*/
 // function playAgain() {
@@ -695,7 +591,7 @@ function releasePiece($event, toSquareRow, toSquareCol) {
 //     console.log("FEN: ", store.state.fen);
 //     return;
 //   }
-  
+
 //   let fromSquare = squares[holding.row][holding.col];
 //   console.log(fromSquare);
 //   // jeśli brak możliwych ruchów, odkładamy bierke
@@ -1058,36 +954,36 @@ function releasePiece($event, toSquareRow, toSquareCol) {
 function updateFen() {
   // wypisanie zawartości szachownicy
   let boardMap = {
-    "rookB"   : "r",
-    "knightB" : "n",
-    "bishopB" : "b",
-    "queenB"  : "q",
-    "kingB"   : "k",
-    "pawnB"   : "p",
-    "pawnW"   : "P",
-    "rookW"   : "R",
-    "knightW" : "N",
-    "bishopW" : "B",
-    "queenW"  : "Q",
-    "kingW"   : "K"
+    "rookB": "r",
+    "knightB": "n",
+    "bishopB": "b",
+    "queenB": "q",
+    "kingB": "k",
+    "pawnB": "p",
+    "pawnW": "P",
+    "rookW": "R",
+    "knightW": "N",
+    "bishopW": "B",
+    "queenW": "Q",
+    "kingW": "K"
   }
   let fen = "";
   let emptyCounter = 0;
 
-  for (let i = 0; i < 8; i++){
-    for (let j = 0; j < 8; j++){
-      if (!squares[i][j].content.piece){
-        emptyCounter ++;
+  for (let i = 0; i < 8; i++) {
+    for (let j = 0; j < 8; j++) {
+      if (!squares[i][j].content.piece) {
+        emptyCounter++;
       }
-      else{
-        if (emptyCounter > 0){ 
+      else {
+        if (emptyCounter > 0) {
           fen += emptyCounter;
           emptyCounter = 0;
         }
         squares[i][j].content.piece ? fen += boardMap[squares[i][j].content.piece] : "";
       }
     }
-    if (emptyCounter > 0){
+    if (emptyCounter > 0) {
       fen += emptyCounter;
       emptyCounter = 0;
     }
@@ -1095,16 +991,16 @@ function updateFen() {
   }
   store.state.turn == "white" ? fen += " w " : fen += " b ";
   let castleCounter = 0;
-  if (squares[7][4].content.piece == "kingW"){
+  if (squares[7][4].content.piece == "kingW") {
     squares[7][7].content.piece == "rookW" && store.state.castle.ooW == true ? fen += "K" : castleCounter++;
     squares[7][0].content.piece == "rookW" && store.state.castle.oooW == true ? fen += "Q" : castleCounter++;
   }
   else {
     castleCounter += 2;
   }
-  if (squares[0][4].content.piece == "kingB"){
+  if (squares[0][4].content.piece == "kingB") {
     squares[0][7].content.piece == "rookB" && store.state.castle.ooB == true ? fen += "k" : castleCounter++;
-    squares[0][0].content.piece == "rookB" && store.state.castle.oooB == true  ? fen += "q" : castleCounter++;
+    squares[0][0].content.piece == "rookB" && store.state.castle.oooB == true ? fen += "q" : castleCounter++;
   }
   else {
     castleCounter += 2;
@@ -1120,22 +1016,22 @@ function updateBoard() {
   turn.value = store.state.turn;
   let fen = store.state.fen;
   let i = 0, j = 0, n = 0;
-  while (fen[n] != " "){
-    if (fen[n] != '/'){
-      switch(fen[n]){
-        case 'r': squares[i][j].content.piece = "rookB";    j++; break;
-        case 'n': squares[i][j].content.piece = "knightB";  j++; break;
-        case 'b': squares[i][j].content.piece = "bishopB";  j++; break;
-        case 'q': squares[i][j].content.piece = "queenB";   j++; break;
-        case 'k': squares[i][j].content.piece = "kingB";    j++; break;
-        case 'p': squares[i][j].content.piece = "pawnB";    j++; break;
-        case 'R': squares[i][j].content.piece = "rookW";    j++; break;
-        case 'N': squares[i][j].content.piece = "knightW";  j++; break;
-        case 'B': squares[i][j].content.piece = "bishopW";  j++; break;
-        case 'Q': squares[i][j].content.piece = "queenW";   j++; break;
-        case 'K': squares[i][j].content.piece = "kingW";    j++; break;
-        case 'P': squares[i][j].content.piece = "pawnW";    j++; break;
-        case '1': squares[i][j].content.piece = null;       j++; break;
+  while (fen[n] != " ") {
+    if (fen[n] != '/') {
+      switch (fen[n]) {
+        case 'r': squares[i][j].content.piece = "rookB"; j++; break;
+        case 'n': squares[i][j].content.piece = "knightB"; j++; break;
+        case 'b': squares[i][j].content.piece = "bishopB"; j++; break;
+        case 'q': squares[i][j].content.piece = "queenB"; j++; break;
+        case 'k': squares[i][j].content.piece = "kingB"; j++; break;
+        case 'p': squares[i][j].content.piece = "pawnB"; j++; break;
+        case 'R': squares[i][j].content.piece = "rookW"; j++; break;
+        case 'N': squares[i][j].content.piece = "knightW"; j++; break;
+        case 'B': squares[i][j].content.piece = "bishopW"; j++; break;
+        case 'Q': squares[i][j].content.piece = "queenW"; j++; break;
+        case 'K': squares[i][j].content.piece = "kingW"; j++; break;
+        case 'P': squares[i][j].content.piece = "pawnW"; j++; break;
+        case '1': squares[i][j].content.piece = null; j++; break;
         case '2': for (let k = 0; k < 2; k++) { squares[i][j].content.piece = null; j++; } break;
         case '3': for (let k = 0; k < 3; k++) { squares[i][j].content.piece = null; j++; } break;
         case '4': for (let k = 0; k < 4; k++) { squares[i][j].content.piece = null; j++; } break;
@@ -1143,7 +1039,7 @@ function updateBoard() {
         case '6': for (let k = 0; k < 6; k++) { squares[i][j].content.piece = null; j++; } break;
         case '7': for (let k = 0; k < 7; k++) { squares[i][j].content.piece = null; j++; } break;
         case '8': for (let k = 0; k < 8; k++) { squares[i][j].content.piece = null; j++; } break;
-        default : break; 
+        default: break;
       }
     }
     else {
@@ -1161,13 +1057,15 @@ function updateBoard() {
 // });
 
 let castling = computed(() => {
-  updateFen(); 
+  updateFen();
   return store.state.castle;
 })
 
 onMounted(() => {
   initSquares();
   updateFen();
+  positionEditorWhite[0][0].color = "clicked";
+  positionEditorBlack[0][0].color = "clicked";
 });
 
 </script>
@@ -1175,6 +1073,7 @@ onMounted(() => {
 .holding-piece {
   pointer-events: none;
 }
+
 .notation {
   font: bold 1.5rem serif;
 }

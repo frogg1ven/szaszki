@@ -19,6 +19,10 @@ const routes = [
         component: () => import('@/views/GamePage.vue')
       },
       {
+        path: 'clock',
+        component: () => import('@/views/ClockPage.vue')
+      },
+      {
         path: 'wifi',
         component: () => import('@/views/WifiPage.vue')
       },
