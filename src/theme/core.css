@@ -188,3 +188,11 @@ ion-popover ion-list {
 .h80 {
   height: 80%;
 }
+
+.custom::part(content) {
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important; 
+}
+
+
