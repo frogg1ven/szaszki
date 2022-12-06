@@ -49,11 +49,12 @@
                                                         Inne...
                                                     </ion-label>
                                                 </ion-item-divider>
-                                                <ion-item :button="true" @click="popoverOpen=true" >Wybierz ręcznie</ion-item>
+                                                <ion-item :button="true" @click="presentAlert">Wybierz ręcznie
+                                                </ion-item>
                                             </ion-item-group>
-                                            <ion-popover :dismiss-on-select="false" class="custom" :is-open="popoverOpen" 
-                                                :event="event" @didDismiss="popoverOpen = false">
-                                                <!-- <ion-item lines="none">
+                                            <!-- <ion-popover :dismiss-on-select="false" class="custom" :is-open="popoverOpen" 
+                                                :event="event" @didDismiss="popoverOpen = false"> -->
+                                            <!-- <ion-item lines="none">
                                                     <ion-label style="width: 50%;"> Minuty </ion-label>
                                                     <ion-input class="input-border ion-text-center" v-model="tempo.min"
                                                         placeholder="Minuty" style="margin: 10px;"></ion-input>
@@ -69,12 +70,12 @@
                                                         placeholder="Inkrement" style="margin: 10px;">
                                                     </ion-input>
                                                 </ion-item> -->
-                                                <ion-item lines="none">
+                                            <!-- <ion-item lines="none">
                                                     <ion-button class="ion-margin nice-btn" size="large" @click="openPopover($event)"
                                                         type="button" expand="block" style="width: 100%;">OK
                                                     </ion-button>
                                                 </ion-item>
-                                            </ion-popover>
+                                            </ion-popover> -->
                                         </ion-list>
                                     </ion-content>
                                 </ion-popover>
@@ -101,7 +102,7 @@
   
 <script>
 import { defineComponent } from "vue";
-import {  IonContent, IonPage, IonButton, IonGrid, IonRow, IonCol, IonIcon, IonItem, IonList, IonPopover, IonLabel, IonItemDivider, IonItemGroup } from "@ionic/vue";
+import { alertController, IonContent, IonPage, IonButton, IonGrid, IonRow, IonCol, IonIcon, IonItem, IonList, IonPopover, IonLabel, IonItemDivider, IonItemGroup } from "@ionic/vue";
 import { settingsOutline } from 'ionicons/icons';
 
 
@@ -109,9 +110,30 @@ let timer;
 
 export default defineComponent({
     setup() {
-        return {
-            settingsOutline,
-        }
+        const presentAlert = async () => {
+            const alert = await alertController.create({
+                header: 'Ustaw tempo gry',
+                buttons: ['OK'],
+                inputs: [
+                    {
+                        type: 'number',
+                        placeholder: 'Minuty',
+                    },
+                    {
+                        type: 'number',
+                        placeholder: 'Sekundy',
+                    },
+                    {
+                        type: 'number',
+                        placeholder: 'Tempo',
+                    },
+                ],
+            });
+
+            await alert.present();
+        };
+
+        return { settingsOutline, presentAlert };
     },
     components: {
         IonContent,
@@ -127,7 +149,7 @@ export default defineComponent({
         IonLabel,
         IonItemDivider,
         IonItemGroup,
-        
+
     },
     data() {
         return {
@@ -195,7 +217,7 @@ export default defineComponent({
             this.prettify(0); this.prettify(1);
             this.colorBot = "primary", this.colorTop = "primary";
         },
-        openPopover(e){
+        openPopover(e) {
             this.event = e;
             this.popoverOpen = false;
             console.log(e, this.popoverOpen)
