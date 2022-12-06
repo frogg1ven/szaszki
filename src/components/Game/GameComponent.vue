@@ -298,7 +298,7 @@ addEventListener('touchmove', (e) => {
   let rect = svg.value.getBoundingClientRect();
   touchLocation.x = ((e.changedTouches[0].clientX - rect.x) * viewbox.x) / rect.width - 55;
   touchLocation.y = ((e.changedTouches[0].clientY - rect.y) * viewbox.y) / rect.height - 60;
-  console.log(touchLocation.x, touchLocation.y);
+  // console.log(touchLocation.x, touchLocation.y);
   releaseFromEditor(e);
 
 });
@@ -330,8 +330,8 @@ function releaseFromEditor(e) {
 }
 
 addEventListener('touchend', (e) => {
+  store.commit("CHANGE_OVERFLOW", true);
   if (isHoldingChessPiece.value && (positionEditorFlag == 0 || positionEditorFlag == 8)) {
-    store.commit("CHANGE_OVERFLOW", true);
     console.log("odkładam pionek, który trzymam w ręce");
     let row = Math.floor((e.changedTouches[0].clientY - 60) / 50);
     let col = Math.floor(e.changedTouches[0].clientX / 50);
