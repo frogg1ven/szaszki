@@ -1,104 +1,204 @@
 <template>
-  <svg ref="svg" :viewBox="`0 0 ${viewbox.x} ${viewbox.y}`" @mousemove="onMouseMove">
+  <svg
+    ref="svg"
+    :viewBox="`0 0 ${viewbox.x} ${viewbox.y}`"
+  >
     <!-- Base Color -->
-    <rect class="bottom" x="0" y="0" :width="viewbox.x" :height="viewbox.y" :fill="boardSettings.baseColor"></rect>
+    <rect
+      class="bottom"
+      x="0"
+      y="0"
+      :width="viewbox.x"
+      :height="viewbox.y"
+      :fill="boardSettings.baseColor"
+    ></rect>
     <!-- ############### czarny edytor pozycji ################ -->
     <g class="position-editor-black-squares">
-      <g v-for="(squareRow, squareRowIndex) in positionEditorBlack" :key="squareRowIndex" class="square-row">
-        <g v-for="(square, squareColIndex) in squareRow" :key="square.code" :ref="square.code"
-          :class="{ square: true, [`square-${square.code}`]: true }" @click="
-            positionEditorSquareClick(
-              $event,
-              squareColIndex,
-              0
-            )
-          ">
-          <rect :class="`rect-${square.code}`" :x="square.x" :y="square.y" :width="square.width" :height="square.height"
+      <!-- <g
+        v-for="(squareRow, squareRowIndex) in positionEditorBlack"
+        :key="squareRowIndex"
+        class="square-row"
+      > -->
+        <g
+          v-for="(square, squareColIndex) in positionEditorBlack"
+          :key="square.code"
+          :ref="square.code"
+          :class="{ square: true, [`square-${square.code}`]: true }"
+          id="rect"
+          @click="positionEditorSquareClick($event, squareColIndex, 0)"
+        >
+          <rect
+            :class="`rect-${square.code}`"
+            :x="square.x"
+            :y="square.y"
+            :width="square.width"
+            :height="square.height"
             :fill="
               square.isPossibleMove
                 ? color['possibleMove']
                 : color[square.color]
-            "></rect>
+            "
+          ></rect>
           <g v-if="square.content.piece">
-            <Piece v-show="square.visible" :key="square.code" :name="square.content.piece" :x="square.content.x"
-              :y="square.content.y + 10" :width="square.content.width" :height="square.content.height"
-              :color="square.content.color" />
+            <Piece
+              v-show="square.visible"
+              :key="square.code"
+              :name="square.content.piece"
+              :x="square.content.x"
+              :y="square.content.y + 10"
+              :width="square.content.width"
+              :height="square.content.height"
+              :color="square.content.color"
+            />
           </g>
         </g>
-      </g>
+      <!-- </g> -->
     </g>
     <!-- ############### END czarny edytor pozycji ################ -->
     <!-- Square group -->
-    <g class="squares">
-      <g v-for="(squareRow, squareRowIndex) in squares" :key="squareRowIndex" class="square-row">
-        <g v-for="(square, squareColIndex) in squareRow" :key="square.code" :ref="square.code"
+    <g class="squares"
+    >
+      <g
+        v-for="(squareRow, squareRowIndex) in squares"
+        :key="squareRowIndex"
+        class="square-row"
+      >
+        <g
+          v-for="(square, squareColIndex) in squareRow"
+          :key="square.code"
+          :ref="square.code"
           :class="{ square: true, [`square-${square.code}`]: true }"
-          @touchstart="squareClick($event, squareRowIndex, squareColIndex)">
-          <rect :class="`rect-${square.color}`" :x="square.x" :y="square.y" :width="square.width"
-            :height="square.height" :fill="
+          id="rect"
+          @touchstart="squareClick($event, squareRowIndex, squareColIndex)"
+
+        >
+          <rect
+            :class="`rect-${square.color}`"
+            :x="square.x"
+            :y="square.y"
+            :width="square.width"
+            :height="square.height"
+            :fill="
               square.isPossibleMove
                 ? color['possibleMove']
-                : square.color == 'light' ? lightSquare : darkSquare
-            "></rect>
+                : square.color == 'light'
+                ? lightSquare
+                : darkSquare
+            "
+          ></rect>
           <g v-if="square.content.piece" class="top">
-            <Piece v-show="square.visible" :key="square.code" :name="square.content.piece" :x="square.content.x"
-              :y="square.content.y + 10" :width="square.content.width" :height="square.content.height"
-              :color="square.content.color" />
+            <Piece
+              v-show="square.visible"
+              :key="square.code"
+              :name="square.content.piece"
+              :x="square.content.x"
+              :y="square.content.y + 10"
+              :width="square.content.width"
+              :height="square.content.height"
+              :color="square.content.color"
+            />
           </g>
         </g>
         <!-- <var v-if="castling" /> -->
       </g>
     </g>
     <g class="notations">
-      <text v-for="i in 8" :key="i" class="notation" :fill="i % 2 == 1 ? darkSquare : lightSquare" x="0"
-        :y="30 + 110 * i">
+      <text
+        v-for="i in 8"
+        :key="i"
+        class="notation"
+        :fill="i % 2 == 1 ? darkSquare : lightSquare"
+        x="0"
+        :y="30 + 110 * i"
+      >
         {{ 9 - i }}
       </text>
-      <text v-for="(i, n) in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']" :key="i" class="notation"
-        :fill="n % 2 == 1 ? darkSquare : lightSquare" :x="90 + 110 * n" :y="viewbox.y - 120">
+      <text
+        v-for="(i, n) in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']"
+        :key="i"
+        class="notation"
+        :fill="n % 2 == 1 ? darkSquare : lightSquare"
+        :x="90 + 110 * n"
+        :y="viewbox.y - 120"
+      >
         {{ i }}
       </text>
     </g>
 
     <!-- ############### biały edytor pozycji ################ -->
     <g class="position-editor-white-squares">
-      <g v-for="(squareRow, squareRowIndex) in positionEditorWhite" :key="squareRowIndex" class="square-row">
-        <g v-for="(square, squareColIndex) in squareRow" :key="square.code" :ref="square.code"
-          :class="{ square: true, [`square-${square.code}`]: true }" @click="
-            positionEditorSquareClick(
-              $event,
-              squareColIndex,
-              1
-            )
-          ">
-          <rect :class="`rect-${square.code}`" :x="square.x" :y="square.y" :width="square.width" :height="square.height"
+      <!-- <g
+        v-for="(squareRow, squareRowIndex) in positionEditorWhite"
+        :key="squareRowIndex"
+        class="square-row"
+      > -->
+        <g
+          v-for="(square, squareColIndex) in positionEditorWhite"
+          :key="square.code"
+          :ref="square.code"
+          :class="{ square: true, [`square-${square.code}`]: true }"
+          id="rect"
+          @click="positionEditorSquareClick($event, squareColIndex, 1)"
+        >
+          <rect
+            :class="`rect-${square.code}`"
+            :x="square.x"
+            :y="square.y"
+            :width="square.width"
+            :height="square.height"
             :fill="
               square.isPossibleMove
                 ? color['possibleMove']
                 : color[square.color]
-            "></rect>
+            "
+          ></rect>
           <g v-if="square.content.piece">
-            <Piece v-show="square.visible" :key="square.code" :name="square.content.piece" :x="square.content.x"
-              :y="square.content.y + 10" :width="square.content.width" :height="square.content.height"
-              :color="square.content.color" />
+            <Piece
+              v-show="square.visible"
+              :key="square.code"
+              :name="square.content.piece"
+              :x="square.content.x"
+              :y="square.content.y + 10"
+              :width="square.content.width"
+              :height="square.content.height"
+              :color="square.content.color"
+            />
           </g>
         </g>
-      </g>
+      <!-- </g> -->
     </g>
     <!-- ############### END biały edytor pozycji ################ -->
     <g class="holding-piece">
-      <Piece v-if="isHoldingChessPiece" :name="isHoldingChessPiece.content.piece" :x="touchLocation.x"
-        :y="touchLocation.y" :width="isHoldingChessPiece.content.width" :color="isHoldingChessPiece.content.color"
-        :height="isHoldingChessPiece.content.height" />
+      <Piece
+        v-if="isHoldingChessPiece"
+        :name="isHoldingChessPiece.content.piece"
+        :x="touchLocation.x"
+        :y="touchLocation.y"
+        :width="isHoldingChessPiece.content.width"
+        :color="isHoldingChessPiece.content.color"
+        :height="isHoldingChessPiece.content.height"
+      />
+    </g>
+    <g class="dummy-piece">
+      <Piece
+        v-if="isDummyChessPiece"
+        :name="isDummyChessPiece.content.piece"
+        :x="dummyLocation.x"
+        :y="dummyLocation.y"
+        :width="isDummyChessPiece.content.width"
+        :color="isDummyChessPiece.content.color"
+        :height="isDummyChessPiece.content.height"
+      />
     </g>
   </svg>
 </template>
 <script setup>
-import { computed, onMounted, reactive, ref, toRefs } from "vue";
+import { computed, onMounted, reactive, ref, toRefs, nextTick } from "vue";
 // import { useStore } from "vuex";
 import helper from "@/components/Game/GameHelper";
 import Piece from "@/components/Game/PieceComponent.vue";
 import store from "@/store/index.js";
+import { add, navigateSharp } from "ionicons/icons";
 // import { defineComponent } from "vue";
 
 // const store = useStore();
@@ -140,9 +240,15 @@ let order = [
 let positionEditorBlack = reactive([]);
 let positionEditorWhite = reactive([]);
 let positionEditorFlag = 0;
+let deletedCords = [];
+let addedCords = [];
 
-let darkSquare = computed(() => { return store.state.blackSquares; })
-let lightSquare = computed(() => { return store.state.whiteSquares; })
+let darkSquare = computed(() => {
+  return store.state.blackSquares;
+});
+let lightSquare = computed(() => {
+  return store.state.whiteSquares;
+});
 
 /*eslint no-undef: "off"*/
 const props = defineProps({
@@ -179,6 +285,7 @@ const { color } = toRefs(props);
  * @returns void
  */
 function initSquares() {
+  rect = svg.value.getBoundingClientRect();
   for (let i = 0; i < 8; i++) {
     squares.push([]);
     for (let j = 0; j < 8; j++) {
@@ -210,8 +317,8 @@ function initSquares() {
 
   // ########################################################################
   // ######## edytor pozycji czarnych bierek ################################
-  positionEditorBlack.push([]);
-  positionEditorWhite.push([]);
+  // positionEditorBlack.push([]);
+  // positionEditorWhite.push([]);
   for (let y = 0; y < 8; y++) {
     let squarePosition = {
       x: y * props.boardSettings.square.width,
@@ -223,7 +330,7 @@ function initSquares() {
       width: props.boardSettings.square.width,
       height: (props.boardSettings.square.height * 3) / 4,
     };
-    positionEditorBlack[0].push({
+    positionEditorBlack.push({
       isPossibleMove: false,
       code,
       visible: true,
@@ -241,7 +348,7 @@ function initSquares() {
     // ######## edytor pozycji białych bierek ################################
     squarePosition = {
       x: y * props.boardSettings.square.width,
-      y: 9 * props.boardSettings.square.height + 20
+      y: 9 * props.boardSettings.square.height + 20,
     };
     code = "white-" + y;
     squareContent = order[y + 8];
@@ -249,7 +356,7 @@ function initSquares() {
       width: props.boardSettings.square.width,
       height: (props.boardSettings.square.height * 3) / 4,
     };
-    positionEditorWhite[0].push({
+    positionEditorWhite.push({
       isPossibleMove: false,
       code,
       visible: true,
@@ -268,120 +375,161 @@ function initSquares() {
 }
 
 let isHoldingChessPiece = ref(false);
+let isDummyChessPiece = ref(false);
 let holding = reactive({ row: null, col: null });
+let present = reactive({ row: null, col: null });
+let touchLocation = reactive({ x: 0, y: 0 });
+let dummyLocation = reactive({ x: 0, y: 0 });
+let rect;
+
+function getPresent(e) {
+  present.row = Math.floor((e.changedTouches[0].clientY - 60 - rect.y) / 50); 
+  present.col = Math.floor((e.changedTouches[0].clientX - rect.x) / 50);
+}
+
+function getTouchLocation(e) {
+  rect = svg.value.getBoundingClientRect();
+  touchLocation.x = ((e.changedTouches[0].clientX - rect.x) * viewbox.x) / rect.width - 55;
+  touchLocation.y = ((e.changedTouches[0].clientY - rect.y) * viewbox.y) / rect.height - 60;
+}
 
 /**
  * Event fire on square click
  * @returns {void}
  */
-function squareClick($event, rowIndex, colIndex) {
-  /*eslint no-unused-vars: "off"*/
+function squareClick(e, row, col) {
   store.commit("CHANGE_OVERFLOW", false);
-  holding.row = rowIndex;
-  holding.col = colIndex;
-  let rect = svg.value.getBoundingClientRect();
-  touchLocation.x = (($event.changedTouches[0].clientX - rect.x) * viewbox.x) / rect.width - 55;
-  touchLocation.y = (($event.changedTouches[0].clientY - rect.y) * viewbox.y) / rect.height - 60;
-  if (squares[rowIndex][colIndex].content.piece && (positionEditorFlag == 0 || positionEditorFlag == 8)) {
-    console.log("holdPiece")
-    holdPiece($event, squares[rowIndex][colIndex]);
-  }
-  else {
-    console.log("releaseFromEditor at click")
-    releaseFromEditor($event);
+  holding.row = row;
+  holding.col = col;
+
+  getTouchLocation(e);
+  
+  if (squares[row][col].content.piece &&
+    (positionEditorFlag == 0 || positionEditorFlag == 8)
+  ) {
+    holdPiece(squares[row][col]);
+  } else {
+    releaseFromEditor(e, 0);
   }
 }
 
-let touchLocation = reactive({ x: 0, y: 0 });
-
 addEventListener('touchmove', (e) => {
-  let rect = svg.value.getBoundingClientRect();
-  touchLocation.x = ((e.changedTouches[0].clientX - rect.x) * viewbox.x) / rect.width - 55;
-  touchLocation.y = ((e.changedTouches[0].clientY - rect.y) * viewbox.y) / rect.height - 60;
-  // console.log(touchLocation.x, touchLocation.y);
-  releaseFromEditor(e);
-
+  getTouchLocation(e);
+  releaseFromEditor(e, 16);
 });
 
-function releaseFromEditor(e) {
-  let row = Math.floor((e.changedTouches[0].clientY - 60) / 50);
-  let col = Math.floor(e.changedTouches[0].clientX / 50);
-  switch (positionEditorFlag) {
-    case 0:
-    case 8:
+function releaseFromEditor(e, n) {
+  getPresent(e);
+  switch (positionEditorFlag + n) {
+    case 0: case 8: case 16: case 24:
       // przesuwanie bierek
       break;
-    case 7:
-    case 15:
-      // usuwanie bierki
-      if (squares[row][col].content.piece) {
-        squares[row][col].content.piece = null;
-        squares[row][col].content.color = null;
+    case 7: case 15:
+      // usuwanie pierwszej bierki
+      if (squares[present.row][present.col].content.piece) {
+        // żeby nie zmienić targetu eventu "touch", zmieniamy tylko widzialność bierki pierwszej bierki, którą chcemy usunąć
+        squares[present.row][present.col].visible = false;
+        //zapisujemy kordy "usuniętej" bierki
+        deletedCords = [present.row, present.col];
+      }
+      break;
+    case 23: case 31:
+      // usuwanie bierek, które nie są kliknięte jako pierwsze
+      if (squares[present.row][present.col].content.piece && (deletedCords[0] != present.row || deletedCords[1] != present.col)) {
+        squares[present.row][present.col].content.piece = null;
+        squares[present.row][present.col].content.color = null;
+      }
+      break;
+    case 1: case 2: case 3: case 4: case 5: case 6: case 9: case 10: case 11: case 12: case 13: case 14:
+      // dodwanie wybranej bierki na pierwszym klikniętym polu, na którym stoi bierka
+      if (squares[present.row][present.col].content.piece != order[positionEditorFlag]) {
+
+        positionEditorFlag < 7 ? isDummyChessPiece.value = positionEditorBlack[positionEditorFlag]: 
+                                 isDummyChessPiece.value = positionEditorWhite[positionEditorFlag - 8];
+
+        dummyLocation.x = squares[present.row][present.col].x;
+        dummyLocation.y = squares[present.row][present.col].y + 10;
+
+        addedCords = [present.row, present.col];
+
+        squares[present.row][present.col].visible = false;
       }
       break;
     default:
       // dodwanie wybranej bierki
-      if (squares[row][col].content.piece != order[positionEditorFlag]) {
-        squares[row][col].content.piece = order[positionEditorFlag];
-        positionEditorFlag < 8 ? squares[row][col].content.color = "black" : squares[row][col].content.color = "white";
+      if (squares[present.row][present.col].content.piece != order[positionEditorFlag] &&
+         (present.row != addedCords[0] || present.col != addedCords[1])) {
+        squares[present.row][present.col].content.piece = order[positionEditorFlag];
+        positionEditorFlag < 8
+          ? (squares[present.row][present.col].content.color = "black")
+          : (squares[present.row][present.col].content.color = "white");
       }
-      break;
   }
 }
 
 addEventListener('touchend', (e) => {
   store.commit("CHANGE_OVERFLOW", true);
+  // jeżeli deletedCords nie jest pustą tablicą, oznacza, że zmieniona zosała widzialność usuwanego pionka,
+  // ale nie został on usunięty, dlatego teraz nalży go usunąć i wyzerować tablicę deletedCords
+  if (deletedCords.length){
+    squares[deletedCords[0]][deletedCords[1]].visible = true;
+    squares[deletedCords[0]][deletedCords[1]].content.piece = null;
+    squares[deletedCords[0]][deletedCords[1]].content.color = null;
+    deletedCords = [];
+  }
+
+  // jeżeli addedCords nie jest puste, zmianiamy widzialność pionka (żeby nie zminił się target toucha), w jego miejsu stawiamy atrapę, 
+  // jeżeli touch się kończy, to usuwana jest atrapa i aktualizowany jest faktycznie ustawiony pionek
+  if (addedCords.length){
+    squares[addedCords[0]][addedCords[1]].visible = true;
+    squares[addedCords[0]][addedCords[1]].content.piece = isDummyChessPiece.value.content.piece;
+    squares[addedCords[0]][addedCords[1]].content.color = isDummyChessPiece.value.content.color;
+
+    isDummyChessPiece.value = false;
+    addedCords = [];
+  }
+
+
   if (isHoldingChessPiece.value && (positionEditorFlag == 0 || positionEditorFlag == 8)) {
     console.log("odkładam pionek, który trzymam w ręce");
-    let row = Math.floor((e.changedTouches[0].clientY - 60) / 50);
-    let col = Math.floor(e.changedTouches[0].clientX / 50);
-    if (row < 0 || row > 7 || col < 0 || col > 7) {
+    getPresent(e);
+    if (present.row < 0 || present.row > 7 || present.col < 0 || present.col > 7) {
       isHoldingChessPiece.value = false;
       squares[holding.row][holding.col].content.piece = null;
       squares[holding.row][holding.col].content.color = null;
       return;
     }
-    releasePiece(e, row, col);
+    releasePiece(present.row, present.col);
   }
 });
 
 /**
  * Hold a chess piece to a square
  */
-function holdPiece($event, square) {
+function holdPiece(square) {
   console.log("holdPiece");
   isHoldingChessPiece.value = square;
   square.visible = false;
-  // if (
-  //   (!square.content.piece ||
-  //     square.content.color !== turn.value ||
-  //     possibleMoves.length == 0) &&
-  //   positionEditorFlag != 13
-  // ) {
-  //   return;
-  // }
-  // square.visible = false;
+  isHoldingChessPiece.value.content.x = touchLocation.x;
+  isHoldingChessPiece.value.content.y = touchLocation.y;
 }
 
-function releasePiece($event, toSquareRow, toSquareCol) {
+function releasePiece(toSquareRow, toSquareCol) {
   let fromSquare = squares[holding.row][holding.col];
   let toSquare = squares[toSquareRow][toSquareCol];
 
   // odkładanie na inne pole
   if (holding.row != toSquareRow || holding.col != toSquareCol) {
-    console.log("holding: ", isHoldingChessPiece.value.content.x, isHoldingChessPiece.value.content.y);
-    console.log("from: ", fromSquare.content.x, fromSquare.content.y);
-    console.log("to: ", toSquare.content.x, toSquare.content.y);
-    console.log("różne pola");
-
     toSquare.content.piece = fromSquare.content.piece;
     toSquare.content.color = fromSquare.content.color;
     toSquare.content.x = toSquare.x;
     toSquare.content.y = toSquare.y;
     toSquare.content.stepNumber++;
     toSquare.visible = true;
+
     fromSquare.content.piece = null;
     fromSquare.content.color = null;
+    fromSquare.visible = true;
 
     isHoldingChessPiece.value = false;
 
@@ -392,10 +540,6 @@ function releasePiece($event, toSquareRow, toSquareCol) {
   }
   // odkładanie na to samo pole
   else if (holding.row == toSquareRow && holding.col == toSquareCol) {
-    console.log("holding: ", isHoldingChessPiece.value.content.x, isHoldingChessPiece.value.content.y);
-    console.log("from: ", fromSquare.content.x, fromSquare.content.y);
-    console.log("to: ", toSquare.x, toSquare.y);
-    console.log("te same pola");
 
     toSquare.content.piece = fromSquare.content.piece;
     toSquare.content.color = fromSquare.content.color;
@@ -407,77 +551,26 @@ function releasePiece($event, toSquareRow, toSquareCol) {
   }
 }
 
-// /**
-//  * Event fire on square click
-//  * @returns {void}
-//  */
-// function squareClick($event, rowIndex, colIndex) {
-//   /*eslint no-unused-vars: "off"*/
-//   store.commit("CHANGE_OVERFLOW", false);
-//   clickedSquare = squares[rowIndex][colIndex];
-//   isMouseDown = true;
-
-//   if (positionEditorFlag != 0) {
-//     if (isHoldingChessPiece.value) {
-//       releasePiece($event, clickedSquare);
-//     } else {
-//       holding.row = rowIndex;
-//       holding.col = colIndex;
-//       holdPiece($event, clickedSquare);
-//     }
-//     return;
-//   }
-
-//   if (isHoldingChessPiece.value) {
-//     // If user is holding a chess piece, then release it.
-//     releasePiece($event, clickedSquare);
-//   } else {
-//     // If user is not holding chess piece, then hold it.
-//     holding.row = rowIndex;
-//     holding.col = colIndex;
-//     holdPiece($event, clickedSquare);
-//   }
-// }
-
-// addEventListener('touchmove', (e) => {
-//   // console.log(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-//   if (isMouseDown && clickedSquare.content.piece){
-//     let rect = svg.value.getBoundingClientRect();
-//     clickedSquare.content.x = ((e.changedTouches[0].clientX - rect.x) * viewbox.x) / rect.width - 55;
-//     clickedSquare.content.y = ((e.changedTouches[0].clientY - rect.y) * viewbox.y) / rect.height - 60;
-//     // clickedSquare.content.x = e.changedTouches[0].clientX;
-//     // clickedSquare.content.y = e.changedTouches[0].clientY;
-//   }
-// });
-
-// addEventListener('touchend', (e) => {
-//   if (isMouseDown) {
-//     isMouseDown = false;
-//     console.log(isMouseDown);
-//     store.commit("CHANGE_OVERFLOW", true);
-
-//     if (isHoldingChessPiece.value) {
-//       console.log("release");
-//       releasePiece(e, squares[Math.floor((e.changedTouches[0].clientY - 60) / 50)][Math.floor(e.changedTouches[0].clientX / 50)]);
-//     }
-//   }
-// });
-
 /**
  * Event fire on square click
  * @returns {void}
  */
 function positionEditorSquareClick($event, colIndex, color) {
-  for(let i = 0; i < 8; i++){
-    positionEditorWhite[0][i].color = "editor";
-    positionEditorBlack[0][i].color = "editor";
+  for (let i = 0; i < 8; i++) {
+    positionEditorWhite[i].color = "editor";
+    positionEditorBlack[i].color = "editor";
   }
-  color ? (positionEditorFlag = colIndex + 8, colIndex == 0 || colIndex == 7 ? 
-          (positionEditorWhite[0][colIndex].color = "clicked", positionEditorBlack[0][colIndex].color = "clicked") 
-          : positionEditorWhite[0][colIndex].color = "clicked"): 
-          (positionEditorFlag = colIndex, colIndex == 0 || colIndex == 7 ? 
-          (positionEditorWhite[0][colIndex].color = "clicked", positionEditorBlack[0][colIndex].color = "clicked") 
-          : positionEditorBlack[0][colIndex].color = "clicked");
+  color
+    ? ((positionEditorFlag = colIndex + 8),
+      colIndex == 0 || colIndex == 7
+        ? ((positionEditorWhite[colIndex].color = "clicked"),
+          (positionEditorBlack[colIndex].color = "clicked"))
+        : (positionEditorWhite[colIndex].color = "clicked"))
+    : ((positionEditorFlag = colIndex),
+      colIndex == 0 || colIndex == 7
+        ? ((positionEditorWhite[colIndex].color = "clicked"),
+          (positionEditorBlack[colIndex].color = "clicked"))
+        : (positionEditorBlack[colIndex].color = "clicked"));
   console.log("positionEditorFlag = ", positionEditorFlag);
 
   // holding.row = rowIndex;
@@ -490,483 +583,22 @@ function positionEditorSquareClick($event, colIndex, color) {
   //   : (isHoldingChessPiece.value = editSquare);
 }
 
-// /*eslint no-unused-vars: "off"*/
-// function playAgain() {
-//   initSquares();
-//   turn.value = "white";
-//   store.commit("RESET_MOVES_HISTORY");
-// }
-
-// function isCheckmate(squareTo) {
-//   const isKingEaten = () =>
-//     squareTo.content.piece == "king"
-//       ? squareTo.content.color == "white"
-//         ? "black"
-//         : "white"
-//       : null;
-
-//   let winner = null;
-
-//   if ((winner = isKingEaten())) {
-//     alert(`${winner} win!`);
-//   }
-
-//   if (winner) {
-//     let playAgain = confirm("Want to play again?");
-//     if (playAgain) playAgain();
-//   }
-
-//   // if (squareTo.content.piece == "king") {
-//   // }
-// }
-
-// function addMoveHistory(fromSquare, toSquare) {
-//   store.commit("ADD_MOVE_HISTORY", {
-//     color: fromSquare.content.color,
-//     from: fromSquare.code,
-//     to: toSquare.code,
-//     piece: fromSquare.content.piece,
-//   });
-// }
-
-
-// /**
-//  * Hold a chess piece to a square
-//  */
-//  function holdPiece($event, square) {
-//   console.log("holdPiece");
-//   isHoldingChessPiece.value = square;
-//   // if (
-//   //   (!square.content.piece ||
-//   //     square.content.color !== turn.value ||
-//   //     possibleMoves.length == 0) &&
-//   //   positionEditorFlag != 13
-//   // ) {
-//   //   return;
-//   // }
-//   // square.visible = false;
-// }
-
-// /**
-//  * Release a chess piece to a square
-//  * @returns {void}
-//  */
-// function releasePiece($event, toSquare) {
-//   if (positionEditorFlag > 0 && positionEditorFlag < 13) {
-//     let fromSquare;
-//     positionEditorFlag < 7
-//       ? (fromSquare = positionEditorBlack[0][holding.col])
-//       : (fromSquare = positionEditorWhite[0][holding.col]);
-//     console.log("release z edycji");
-//     toSquare.content.piece = fromSquare.content.piece;
-//     toSquare.content.color = fromSquare.content.color;
-//     toSquare.visible = true;
-//     positionEditorFlag = 0;
-//     updateFen();
-//     console.log("FEN: ", store.state.fen);
-//     return;
-//   } else if (positionEditorFlag == 13) {
-//     console.log("przesówanie pionków swobodnie");
-//     positionEditorFlag = 0;
-//     let fromSquare = squares[holding.row][holding.col];
-
-//     toSquare.content.piece = fromSquare.content.piece;
-//     toSquare.content.color = fromSquare.content.color;
-//     toSquare.content.stepNumber++;
-//     toSquare.visible = true;
-//     fromSquare.content.piece = null;
-//     fromSquare.content.color = null;
-
-//     isHoldingChessPiece.value = false;
-//     updateFen();
-//     console.log("FEN: ", store.state.fen);
-//     return;
-//   } else if (positionEditorFlag == 14) {
-//     console.log("usuwanie pionków");
-//     toSquare.content.piece = null;
-//     toSquare.content.color = null;
-//     // toSquare.visible = false;
-//     positionEditorFlag = 0;
-//     updateFen();
-//     console.log("FEN: ", store.state.fen);
-//     return;
-//   }
-
-//   let fromSquare = squares[holding.row][holding.col];
-//   console.log(fromSquare);
-//   // jeśli brak możliwych ruchów, odkładamy bierke
-//   console.log("RELEASEPIECE");
-//   // if (!toSquare.isPossibleMove) {
-//   //   isHoldingChessPiece.value = null;
-//   //   fromSquare.visible = true;
-//   //   updateFen();
-//   //   console.log("FEN: ", store.state.fen);
-//   //   return clearPossibleMoves();
-//   // }
-
-//   // addMoveHistory(fromSquare, toSquare);
-//   // isCheckmate(toSquare);
-
-//   console.log("release from ", squares[holding.row][holding.col]);
-//   console.log("to ", toSquare);
-
-//   toSquare.content.piece = fromSquare.content.piece;
-//   toSquare.content.color = fromSquare.content.color;
-//   toSquare.content.stepNumber++;
-//   toSquare.visible = true;
-//   fromSquare.content.piece = null;
-//   fromSquare.content.color = null;
-
-//   isHoldingChessPiece.value = false;
-
-//   turnNumber.value++;
-
-//   clearPossibleMoves();
-
-//   turn.value = turn.value == "black" ? "white" : "black";
-//   store.commit("CHANGE_TURN", turn.value);
-//   updateFen();
-//   console.log("FEN: ", store.state.fen);
-// }
-
-// /**
-//  * Event trigerred on square onmouseenter
-//  * @param {MouseEvent} $event
-//  * @param {Number} squareRowIndex
-//  * @param {Number} squareColIndex
-//  * @returns {void}
-//  */
-// function squareMouseEnter($event, squareRowIndex, squareColIndex) {
-//   // If hover on a piece and the color is the current turn, show possible moves
-//   let square = squares[squareRowIndex][squareColIndex];
-//   if (
-//     square.content.piece &&
-//     square.content.color == turn.value &&
-//     !isHoldingChessPiece.value
-//   ) {
-//     showPossibleMoves(squareRowIndex, squareColIndex);
-//     document.body.style.cursor = "pointer";
-//   }
-// }
-
-// function makeItPossible(square) {
-//   square.isPossibleMove = true;
-//   possibleMoves.push(square);
-// }
-
-// function pawnPossibleMoves(squareRowIndex, squareColIndex) {
-//   let square = squares[squareRowIndex][squareColIndex];
-//   let stepForward = 1;
-//   if (square.content.stepNumber === 1) stepForward = 2;
-//   if (square.content.color == "white") stepForward *= -1;
-
-//   let nextSquare;
-
-//   let i = 0;
-//   do {
-//     i += square.content.color == "white" ? -1 : 1;
-
-//     nextSquare = squares[squareRowIndex + i][squareColIndex];
-//     // console.log('pawn possible moves', nextSquare)
-//     if (nextSquare.content.piece) break;
-//     makeItPossible(nextSquare);
-//   } while (i !== stepForward);
-
-//   // check for topleft and topright
-//   if (square.content.color == "white") {
-//     nextSquare = squares[squareRowIndex - 1][squareColIndex - 1];
-//     if (
-//       nextSquare &&
-//       nextSquare.content.piece &&
-//       nextSquare.content.color == "black"
-//     )
-//       makeItPossible(nextSquare);
-//     nextSquare = squares[squareRowIndex - 1][squareColIndex + 1];
-//     if (
-//       nextSquare &&
-//       nextSquare.content.piece &&
-//       nextSquare.content.color == "black"
-//     )
-//       makeItPossible(nextSquare);
-//   } else if (square.content.color == "black") {
-//     nextSquare = squares[squareRowIndex + 1][squareColIndex - 1];
-//     if (
-//       nextSquare &&
-//       nextSquare.content.piece &&
-//       nextSquare.content.color == "white"
-//     )
-//       makeItPossible(nextSquare);
-//     nextSquare = squares[squareRowIndex + 1][squareColIndex + 1];
-//     if (
-//       nextSquare &&
-//       nextSquare.content.piece &&
-//       nextSquare.content.color == "white"
-//     )
-//       makeItPossible(nextSquare);
-//   }
-// }
-
-// /**
-//  * Show rook possible moves by row and column index
-//  * @param {Number} squareRowIndex
-//  * @param {Number} squareColIndex
-//  * @returns {void}
-//  */
-// function rookPossibleMoves(squareRowIndex, squareColIndex) {
-//   let moveTargets = [];
-//   let directionMapping = {
-//     top: { row: "min" },
-//     bottom: { row: "plus" },
-//     left: { col: "min" },
-//     right: { col: "plus" },
-//   };
-
-//   for (let directionName in directionMapping) {
-//     let direction = directionMapping[directionName];
-//     for (let i = 1; i <= 8; i++) {
-//       let getOffset = (direction, value) => {
-//         if (direction == "row") return value == "min" ? -i : i;
-//         else return value == "min" ? -i : i;
-//       };
-
-//       let targetRow = !direction.row
-//         ? squareRowIndex
-//         : squareRowIndex + getOffset("row", direction.row);
-//       let targetCol = !direction.col
-//         ? squareColIndex
-//         : squareColIndex + getOffset("col", direction.col);
-
-//       if (targetRow < 0 || targetCol < 0 || targetRow > 7 || targetCol > 7)
-//         break;
-//       let currSquare = squares[targetRow][targetCol];
-
-//       if (currSquare.content.color == turn.value) break;
-//       else if (currSquare.content.color == oppositeTurn.value) {
-//         moveTargets.push({ rowIndex: targetRow, colIndex: targetCol });
-//         break;
-//       } else {
-//         moveTargets.push({ rowIndex: targetRow, colIndex: targetCol });
-//       }
-//     }
-//   }
-
-//   moveTargets.forEach((target) => {
-//     let { rowIndex, colIndex } = target;
-//     let targetSquare = squares[rowIndex][colIndex];
-
-//     if (targetSquare.content.piece && targetSquare.content.color == turn.value)
-//       return;
-//     else makeItPossible(targetSquare);
-//   });
-// }
-
-// /**
-//  * Show king's possible moves by row and column index
-//  * @param {Number} squareRowIndex
-//  * @param {Number} squareColIndex
-//  * @returns {void}
-//  */
-// function kingPossibleMoves(squareRowIndex, squareColIndex) {
-//   let possibleMovesIndex = helper.getKingPossibleMoves(
-//     squareRowIndex,
-//     squareColIndex
-//   );
-
-//   possibleMovesIndex.forEach((possible) => {
-//     let { targetRow, targetCol } = possible;
-
-//     if (targetRow < 0 || targetCol < 0 || targetRow > 7 || targetCol > 7)
-//       return;
-
-//     let square = squares[targetRow][targetCol];
-
-//     if (square.content.color == turn.value) return;
-//     else if (
-//       !square.content.color ||
-//       square.content.color == oppositeTurn.value
-//     )
-//       makeItPossible(square);
-//   });
-// }
-
-// /**
-//  * Show queen's possible moves by row and column index
-//  * @param {Number} squareRowIndex
-//  * @param {Number} squareColIndex
-//  * @returns {void}
-//  */
-// function queenPossibleMoves(squareRowIndex, squareColIndex) {
-//   bishopPossibleMoves(squareRowIndex, squareColIndex);
-//   rookPossibleMoves(squareRowIndex, squareColIndex);
-// }
-
-// /**
-//  * Show knight's possible moves by row and column index
-//  * @param {Number} squareRowIndex
-//  * @param {Number} squareColIndex
-//  * @returns {void}
-//  */
-// function knightPossibleMoves(squareRowIndex, squareColIndex) {
-//   let moveTargets = helper.getKnightPossibleMoves(
-//     squareRowIndex,
-//     squareColIndex
-//   );
-
-//   moveTargets.forEach((target) => {
-//     let { rowIndex, colIndex } = target;
-//     if (rowIndex < 0 || colIndex < 0 || rowIndex > 7 || colIndex > 7) return;
-
-//     let targetSquare = squares[rowIndex][colIndex];
-
-//     if (targetSquare.content.piece && targetSquare.content.color == turn.value)
-//       return;
-//     else makeItPossible(targetSquare);
-//   });
-// }
-
-// /**
-//  * Show bishop's possible moves by row and column index
-//  * @param {Number} squareRowIndex
-//  * @param {Number} squareColIndex
-//  * @returns {void}
-//  */
-// function bishopPossibleMoves(squareRowIndex, squareColIndex) {
-//   /*eslint no-unused-vars: "off"*/
-//   let square = squares[squareRowIndex][squareColIndex];
-
-//   let moveTargets = [];
-//   let directionMapping = {
-//     topleft: { row: "min", col: "min" },
-//     topright: { row: "min", col: "plus" },
-//     bottomleft: { row: "plus", col: "min" },
-//     bottomright: { row: "plus", col: "plus" },
-//   };
-
-//   // Check diagonally for every direction
-//   for (let directionName in directionMapping) {
-//     let direction = directionMapping[directionName];
-//     for (let i = 1; i <= 8; i++) {
-//       let targetRow =
-//         direction.row == "min" ? squareRowIndex - i : squareRowIndex + i;
-//       let targetCol =
-//         direction.col == "min" ? squareColIndex - i : squareColIndex + i;
-
-//       if (targetRow < 0 || targetCol < 0 || targetRow > 7 || targetCol > 7)
-//         break;
-//       let currSquare = squares[targetRow][targetCol];
-
-//       if (currSquare.content.color == turn.value) break;
-//       else if (currSquare.content.color == oppositeTurn.value) {
-//         moveTargets.push({ rowIndex: targetRow, colIndex: targetCol });
-//         break;
-//       } else {
-//         moveTargets.push({ rowIndex: targetRow, colIndex: targetCol });
-//       }
-//     }
-//   }
-
-//   // console.log("Bishop possible:", moveTargets);
-
-//   moveTargets.forEach((target) => {
-//     let { rowIndex, colIndex } = target;
-//     let targetSquare = squares[rowIndex][colIndex];
-//     console.log("target", targetSquare);
-
-//     if (targetSquare.content.piece && targetSquare.content.color == turn.value)
-//       return;
-//     else makeItPossible(targetSquare);
-//   });
-// }
-
-// const possibleMovesMapping = {
-//   pawnW: pawnPossibleMoves,
-//   rookW: rookPossibleMoves,
-//   kingW: kingPossibleMoves,
-//   queenW: queenPossibleMoves,
-//   knightW: knightPossibleMoves,
-//   bishopW: bishopPossibleMoves,
-//   pawnB: pawnPossibleMoves,
-//   rookB: rookPossibleMoves,
-//   kingB: kingPossibleMoves,
-//   queenB: queenPossibleMoves,
-//   knightB: knightPossibleMoves,
-//   bishopB: bishopPossibleMoves,
-// };
-
-// /**
-//  * Show possible moves from a square
-//  * @param {Object} square
-//  * @returns {void}
-//  */
-// function showPossibleMoves(squareRowIndex, squareColIndex) {
-//   /*eslint no-unused-vars: "off"*/
-//   // nie pokazuj koloru możliwego ruchu jeśli możliwe jest
-//   // ustawianie pozcji
-//   if (positionEditorFlag != 0) return;
-
-//   let square = squares[squareRowIndex][squareColIndex];
-//   return possibleMovesMapping[square.content.piece](
-//     squareRowIndex,
-//     squareColIndex
-//   );
-// }
-
-// /**
-//  * Remove all possible moves
-//  */
-// function clearPossibleMoves() {
-//   for (let i = 0; i < possibleMoves.length; i++) {
-//     possibleMoves[i].isPossibleMove = false;
-//   }
-//   possibleMoves = reactive([]);
-// }
-
-// /**
-//  * Event trigerred on square onmouseleave
-//  * @param {MouseEvent} $event
-//  * @param {Object} square
-//  * @returns {void}
-//  */
-// function squareMouseLeave($event, squareRowIndex, squareColIndex) {
-//   // document.body.style.cursor = "initial";
-//   // if (!isHoldingChessPiece.value) clearPossibleMoves();
-// }
-
-// /**
-//  * Cancel current turn move
-//  */
-// function cancelTurn(squareTo) {}
-
-// let mouseLocation = reactive({ x: 0, y: 0 });
-
-// /**
-//  * onMouseMove fired when the mouse moving
-//  * @param {Event} e
-//  */
-// function onMouseMove(e) {
-//   let rect = svg.value.getBoundingClientRect();
-//   mouseLocation.x = ((e.clientX - rect.x) * viewbox.x) / rect.width;
-//   mouseLocation.y = ((e.clientY - rect.y) * viewbox.y) / rect.height;
-//   // mouseLocation.x = viewbox.x;
-//   // mouseLocation.y = viewbox.y;
-// }
-
 function updateFen() {
   // wypisanie zawartości szachownicy
   let boardMap = {
-    "rookB": "r",
-    "knightB": "n",
-    "bishopB": "b",
-    "queenB": "q",
-    "kingB": "k",
-    "pawnB": "p",
-    "pawnW": "P",
-    "rookW": "R",
-    "knightW": "N",
-    "bishopW": "B",
-    "queenW": "Q",
-    "kingW": "K"
-  }
+    rookB: "r",
+    knightB: "n",
+    bishopB: "b",
+    queenB: "q",
+    kingB: "k",
+    pawnB: "p",
+    pawnW: "P",
+    rookW: "R",
+    knightW: "N",
+    bishopW: "B",
+    queenW: "Q",
+    kingW: "K",
+  };
   let fen = "";
   let emptyCounter = 0;
 
@@ -974,35 +606,42 @@ function updateFen() {
     for (let j = 0; j < 8; j++) {
       if (!squares[i][j].content.piece) {
         emptyCounter++;
-      }
-      else {
+      } else {
         if (emptyCounter > 0) {
           fen += emptyCounter;
           emptyCounter = 0;
         }
-        squares[i][j].content.piece ? fen += boardMap[squares[i][j].content.piece] : "";
+        squares[i][j].content.piece
+          ? (fen += boardMap[squares[i][j].content.piece])
+          : "";
       }
     }
     if (emptyCounter > 0) {
       fen += emptyCounter;
       emptyCounter = 0;
     }
-    i != 7 ? fen += "/" : fen += "";
+    i != 7 ? (fen += "/") : (fen += "");
   }
-  store.state.turn == "white" ? fen += " w " : fen += " b ";
+  store.state.turn == "white" ? (fen += " w ") : (fen += " b ");
   let castleCounter = 0;
   if (squares[7][4].content.piece == "kingW") {
-    squares[7][7].content.piece == "rookW" && store.state.castle.ooW == true ? fen += "K" : castleCounter++;
-    squares[7][0].content.piece == "rookW" && store.state.castle.oooW == true ? fen += "Q" : castleCounter++;
-  }
-  else {
+    squares[7][7].content.piece == "rookW" && store.state.castle.ooW == true
+      ? (fen += "K")
+      : castleCounter++;
+    squares[7][0].content.piece == "rookW" && store.state.castle.oooW == true
+      ? (fen += "Q")
+      : castleCounter++;
+  } else {
     castleCounter += 2;
   }
   if (squares[0][4].content.piece == "kingB") {
-    squares[0][7].content.piece == "rookB" && store.state.castle.ooB == true ? fen += "k" : castleCounter++;
-    squares[0][0].content.piece == "rookB" && store.state.castle.oooB == true ? fen += "q" : castleCounter++;
-  }
-  else {
+    squares[0][7].content.piece == "rookB" && store.state.castle.ooB == true
+      ? (fen += "k")
+      : castleCounter++;
+    squares[0][0].content.piece == "rookB" && store.state.castle.oooB == true
+      ? (fen += "q")
+      : castleCounter++;
+  } else {
     castleCounter += 2;
   }
   if (castleCounter >= 4) {
@@ -1015,34 +654,110 @@ function updateFen() {
 function updateBoard() {
   turn.value = store.state.turn;
   let fen = store.state.fen;
-  let i = 0, j = 0, n = 0;
+  let i = 0,
+    j = 0,
+    n = 0;
   while (fen[n] != " ") {
-    if (fen[n] != '/') {
+    if (fen[n] != "/") {
       switch (fen[n]) {
-        case 'r': squares[i][j].content.piece = "rookB"; j++; break;
-        case 'n': squares[i][j].content.piece = "knightB"; j++; break;
-        case 'b': squares[i][j].content.piece = "bishopB"; j++; break;
-        case 'q': squares[i][j].content.piece = "queenB"; j++; break;
-        case 'k': squares[i][j].content.piece = "kingB"; j++; break;
-        case 'p': squares[i][j].content.piece = "pawnB"; j++; break;
-        case 'R': squares[i][j].content.piece = "rookW"; j++; break;
-        case 'N': squares[i][j].content.piece = "knightW"; j++; break;
-        case 'B': squares[i][j].content.piece = "bishopW"; j++; break;
-        case 'Q': squares[i][j].content.piece = "queenW"; j++; break;
-        case 'K': squares[i][j].content.piece = "kingW"; j++; break;
-        case 'P': squares[i][j].content.piece = "pawnW"; j++; break;
-        case '1': squares[i][j].content.piece = null; j++; break;
-        case '2': for (let k = 0; k < 2; k++) { squares[i][j].content.piece = null; j++; } break;
-        case '3': for (let k = 0; k < 3; k++) { squares[i][j].content.piece = null; j++; } break;
-        case '4': for (let k = 0; k < 4; k++) { squares[i][j].content.piece = null; j++; } break;
-        case '5': for (let k = 0; k < 5; k++) { squares[i][j].content.piece = null; j++; } break;
-        case '6': for (let k = 0; k < 6; k++) { squares[i][j].content.piece = null; j++; } break;
-        case '7': for (let k = 0; k < 7; k++) { squares[i][j].content.piece = null; j++; } break;
-        case '8': for (let k = 0; k < 8; k++) { squares[i][j].content.piece = null; j++; } break;
-        default: break;
+        case "r":
+          squares[i][j].content.piece = "rookB";
+          j++;
+          break;
+        case "n":
+          squares[i][j].content.piece = "knightB";
+          j++;
+          break;
+        case "b":
+          squares[i][j].content.piece = "bishopB";
+          j++;
+          break;
+        case "q":
+          squares[i][j].content.piece = "queenB";
+          j++;
+          break;
+        case "k":
+          squares[i][j].content.piece = "kingB";
+          j++;
+          break;
+        case "p":
+          squares[i][j].content.piece = "pawnB";
+          j++;
+          break;
+        case "R":
+          squares[i][j].content.piece = "rookW";
+          j++;
+          break;
+        case "N":
+          squares[i][j].content.piece = "knightW";
+          j++;
+          break;
+        case "B":
+          squares[i][j].content.piece = "bishopW";
+          j++;
+          break;
+        case "Q":
+          squares[i][j].content.piece = "queenW";
+          j++;
+          break;
+        case "K":
+          squares[i][j].content.piece = "kingW";
+          j++;
+          break;
+        case "P":
+          squares[i][j].content.piece = "pawnW";
+          j++;
+          break;
+        case "1":
+          squares[i][j].content.piece = null;
+          j++;
+          break;
+        case "2":
+          for (let k = 0; k < 2; k++) {
+            squares[i][j].content.piece = null;
+            j++;
+          }
+          break;
+        case "3":
+          for (let k = 0; k < 3; k++) {
+            squares[i][j].content.piece = null;
+            j++;
+          }
+          break;
+        case "4":
+          for (let k = 0; k < 4; k++) {
+            squares[i][j].content.piece = null;
+            j++;
+          }
+          break;
+        case "5":
+          for (let k = 0; k < 5; k++) {
+            squares[i][j].content.piece = null;
+            j++;
+          }
+          break;
+        case "6":
+          for (let k = 0; k < 6; k++) {
+            squares[i][j].content.piece = null;
+            j++;
+          }
+          break;
+        case "7":
+          for (let k = 0; k < 7; k++) {
+            squares[i][j].content.piece = null;
+            j++;
+          }
+          break;
+        case "8":
+          for (let k = 0; k < 8; k++) {
+            squares[i][j].content.piece = null;
+            j++;
+          }
+          break;
+        default:
+          break;
       }
-    }
-    else {
+    } else {
       i++;
       j = 0;
     }
@@ -1050,22 +765,22 @@ function updateBoard() {
   }
 }
 
-// let fenString = computed(() =>  { 
-//   updateFen(); 
-//   updateBoard(); 
+// let fenString = computed(() =>  {
+//   updateFen();
+//   updateBoard();
 //   return null;
 // });
 
 let castling = computed(() => {
   updateFen();
   return store.state.castle;
-})
+});
 
 onMounted(() => {
   initSquares();
   updateFen();
-  positionEditorWhite[0][0].color = "clicked";
-  positionEditorBlack[0][0].color = "clicked";
+  positionEditorWhite[0].color = "clicked";
+  positionEditorBlack[0].color = "clicked";
 });
 
 </script>
