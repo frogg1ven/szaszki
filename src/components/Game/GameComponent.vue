@@ -99,7 +99,7 @@
             />
           </g>
         </g>
-        <!-- <var v-if="castling" /> -->
+        <var v-if="fenString" />
       </g>
     </g>
     <g class="notations">
@@ -403,7 +403,7 @@ function squareClick(e, row, col) {
   holding.col = col;
 
   getTouchLocation(e);
-  
+
   if (squares[row][col].content.piece &&
     (positionEditorFlag == 0 || positionEditorFlag == 8)
   ) {
@@ -501,6 +501,7 @@ addEventListener('touchend', (e) => {
     }
     releasePiece(present.row, present.col);
   }
+  updateFen();
 });
 
 /**
@@ -535,7 +536,7 @@ function releasePiece(toSquareRow, toSquareCol) {
 
     turnNumber.value++;
 
-    updateFen();
+    // updateFen();
     console.log("FEN: ", store.state.fen);
   }
   // odkładanie na to samo pole
@@ -765,16 +766,15 @@ function updateBoard() {
   }
 }
 
-// let fenString = computed(() =>  {
-//   updateFen();
-//   updateBoard();
-//   return null;
-// });
-
-let castling = computed(() => {
-  updateFen();
-  return store.state.castle;
+let fenString = computed(() =>  {
+  updateBoard();
+  return store.state.fen;
 });
+
+// let castling = computed(() => {
+//   updateFen();
+//   return store.state.castle;
+// });
 
 onMounted(() => {
   initSquares();

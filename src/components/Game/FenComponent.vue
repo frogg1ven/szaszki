@@ -46,12 +46,13 @@
     <ion-row>
       <ion-col>
         <ion-item>
-          <ion-checkbox
-            class="no-padding"
-            slot="end"
-            v-model="castle.ooW"
-            @ionChange="castleCheckbox(0)"
-          ></ion-checkbox>
+          <template v-slot:end>
+            <ion-checkbox
+              class="no-padding"
+              v-model="castle.ooW"
+              @ionChange="castleCheckbox(0)"
+            ></ion-checkbox>
+          </template>
           <ion-label>Białe O-O</ion-label>
         </ion-item>
       </ion-col>
@@ -222,11 +223,12 @@ export default defineComponent({
         ":" +
         store.state.port +
         "/setFen";
-        let engineFen = "";
-        this.chessEngine.engineOn ? engineFen += "1" : engineFen += "0";
-        this.chessEngine.engineSide == "white" ? engineFen += "0" : engineFen += "1";
-        console.log(store.state.fen);
-        console.log(store.state.fen + " " + engineFen);
+      let engineFen = "";
+      this.chessEngine.engineOn ? (engineFen += "1") : (engineFen += "0");
+      this.chessEngine.engineSide == "white"
+        ? (engineFen += "0")
+        : (engineFen += "1");
+      console.log(store.state.fen + " " + engineFen);
       axios
         .get(url, {
           params: {

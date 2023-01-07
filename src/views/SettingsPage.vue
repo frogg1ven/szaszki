@@ -27,7 +27,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import { IonContent, IonPage } from "@ionic/vue";
+import { IonContent, IonPage, IonButton } from "@ionic/vue";
 import axios from "axios";
 import store from "@/store/index.js";
 import { ColorPicker } from "vue-accessible-color-picker";
@@ -36,6 +36,7 @@ export default defineComponent({
   components: {
     IonContent,
     IonPage,
+    IonButton,
     ColorPicker,
   },
   data() {
